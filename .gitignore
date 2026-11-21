@@ -1,0 +1,75 @@
+# SLM Evaluation Harness - Ignore Rules
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Model weights — NEVER commit these
+*.gguf
+*.bin
+*.safetensors
+*.onnx
+*.pt
+*.pth
+models_cache/
+model_downloads/
+
+# Large data files
+*.h5
+*.hdf5
+*.parquet
+
+# API keys and credentials
+.env
+*.key
+*.pem
+secrets/
+
+# Results databases (can be large)
+results/raw/*.db
+results/raw/*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Local config overrides
+configs/local_*.yaml
+configs/local_*.json
+
+# Generated reports (keep figures)
+docs/report/*.pdf
+docs/report/*.docx
+
+# Package manager
+pip-log.txt
+pip-delete-this-directory.txt

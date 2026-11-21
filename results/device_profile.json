@@ -1,0 +1,33 @@
+{
+  "device_id": "dev-7a345f4d",
+  "device_category": "laptop",
+  "timestamp": "2026-11-21T10:58:12.029450+00:00",
+  "cpu": {
+    "model": "12th Gen Intel(R) Core(TM) i5-12450H",
+    "architecture": "AMD64",
+    "cores_physical": 8,
+    "cores_logical": 12,
+    "max_clock_mhz": 2000
+  },
+  "ram_total_mb": 16052,
+  "gpu": {
+    "model": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "architecture": "Unknown",
+    "vram_total_mb": 4096,
+    "driver_version": "617.42",
+    "cuda_version": "Unknown",
+    "compute_capability": "8.6"
+  },
+  "has_gpu": true,
+  "os_name": "Windows 11",
+  "os_version": "10.0.26300",
+  "os_architecture": "AMD64",
+  "python_version": "3.14.3",
+  "measurement_limitations": [
+    "Thermal throttling may affect sustained benchmark performance",
+    "Battery vs AC power state affects CPU/GPU boost clocks",
+    "Limited VRAM (4096 MB) constrains model sizes",
+    "Background OS processes may affect measurement precision",
+    "Power consumption measurement not available without specialized hardware"
+  ]
+}

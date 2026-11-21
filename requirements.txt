@@ -1,0 +1,31 @@
+# Core dependencies
+numpy>=2.0
+pandas>=2.0
+matplotlib>=3.8
+
+# Database
+# sqlite3 is part of Python stdlib — no extra package needed
+
+# System monitoring
+psutil>=5.9
+
+# Testing
+pytest>=8.0
+
+# Configuration
+pyyaml>=6.0
+
+# ML/Inference runtimes (install as needed based on compatibility)
+# Uncomment after verifying compatibility with your Python version:
+#
+# torch>=2.1                    # PyTorch for Transformers runtime
+# transformers>=4.40            # HuggingFace Transformers
+# llama-cpp-python>=0.2.0       # llama.cpp Python bindings (GGUF inference)
+# onnxruntime-genai>=0.3        # ONNX Runtime for generative AI (optional)
+
+# GPU monitoring (optional, for NVIDIA GPUs)
+# pynvml>=11.5                  # NVIDIA Management Library
+
+# Visualization (optional)
+# plotly>=5.0                   # Interactive charts
+# streamlit>=1.30               # Dashboard UI
