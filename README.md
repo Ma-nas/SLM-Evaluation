@@ -1,122 +1,160 @@
-# SLM-Evaluation
-
-## Landscape Lock-In, Device-Class Specification, and Cross-Platform Evaluation Harness for Small Language Models (SLMs)
-
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<p align="center">
+  <h1 align="center">SLM-Evaluation</h1>
+  <p align="center">
+    <strong>Cross-Platform Evaluation Harness for Small Language Models</strong>
+  </p>
+  <p align="center">
+    <a href="#quick-start">Quick Start</a> •
+    <a href="#architecture">Architecture</a> •
+    <a href="#models">Models</a> •
+    <a href="#benchmarks">Benchmarks</a> •
+    <a href="docs/">Documentation</a>
+  </p>
+</p>
 
 ---
 
-### Project Overview
+> **Landscape Lock-In, Device-Class Specification, and Cross-Platform Evaluation Harness for Small Language Models (SLMs)**
 
-A modular Python framework for benchmarking Small Language Models (SLMs) across different inference runtimes and device classes. The project investigates **landscape lock-in** (ecosystem dependencies that constrain model portability), defines a **device-class specification** for characterizing inference hardware, and provides a **cross-platform evaluation harness** for reproducible SLM benchmarking.
+A modular Python framework for benchmarking Small Language Models across inference runtimes and device classes. Investigates ecosystem lock-in, defines hardware specifications, and provides reproducible measurement protocols.
 
-### Research Questions
+## Research Questions
 
 | ID | Question |
 |----|----------|
-| RQ1 | How does SLM performance vary across different device classes (CPU-only vs GPU-assisted)? |
-| RQ2 | How do inference runtimes affect model performance, compatibility, and portability? |
-| RQ3 | What trade-offs exist between quantization, model quality, inference speed, and resource consumption? |
-| RQ4 | How can a standardized evaluation harness improve benchmark reproducibility? |
+| **RQ1** | How does SLM performance vary across different device classes (CPU-only vs GPU-assisted)? |
+| **RQ2** | How do inference runtimes affect model performance, compatibility, and portability? |
+| **RQ3** | What trade-offs exist between quantization, model quality, inference speed, and resource consumption? |
+| **RQ4** | How can a standardized evaluation harness improve benchmark reproducibility? |
 
-### Key Features
-
-- **Device Profiler** — Automatic detection of CPU, GPU, RAM, VRAM, OS, and driver versions
-- **Model Registry** — Catalog of SLM checkpoints with format, quantization, and compatibility metadata
-- **Runtime Adapters** — Unified interface for llama.cpp, Transformers/PyTorch, and ONNX Runtime
-- **Benchmark Engine** — Controlled measurement of TTFT, throughput, latency, and memory consumption
-- **Quality Evaluation** — Task-specific quality metrics alongside performance benchmarks
-- **Results Storage** — SQLite database with full experiment metadata for reproducibility
-- **Visualization** — Statistical analysis and comparison charts
-
-### Project Structure
+## Architecture
 
 ```
-SLM-Evaluation/
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── docs/
-│   ├── research/            # Literature review, gap analysis, model selection
-│   ├── architecture/        # System design, device specification
-│   ├── experimental-design/ # Benchmark methodology, prompt workloads
-│   └── report/              # University research report
-├── src/
-│   ├── models/              # Model registry and management
-│   ├── devices/             # Device profiler and specification
-│   ├── runtimes/            # Runtime adapter interface and implementations
-│   ├── benchmarks/          # Benchmark execution engine
-│   ├── evaluation/          # Quality evaluation metrics
-│   ├── monitoring/          # Resource monitoring (RAM, VRAM)
-│   ├── config/              # Central configuration
-│   └── utils/               # Timer, logging, helpers
-├── tests/                   # Unit and integration tests
-├── configs/                 # Experiment configuration files
-├── scripts/                 # CLI scripts for running benchmarks
-├── results/
-│   ├── raw/                 # Raw experiment data
-│   ├── processed/           # Aggregated statistics
-│   └── figures/             # Generated charts and graphs
-└── presentation/            # Slides and viva preparation
+src/
+├── config/          # Central configuration and settings
+├── devices/         # Hardware profiler and device-class specification
+├── models/          # Model registry with format and compatibility metadata
+├── runtimes/        # Runtime adapter interface (llama.cpp, Transformers, ONNX)
+├── benchmarks/      # Benchmark engine and SQLite results storage
+├── evaluation/      # Task-quality evaluation metrics
+├── monitoring/      # RAM and VRAM resource monitoring
+└── utils/           # Timer, logging, and shared utilities
 ```
 
-### Hardware Requirements
+## Models
 
-| Component | Minimum | Tested On |
-|-----------|---------|-----------|
-| CPU | x86_64, 4+ cores | Intel i5-12450H (8C/12T) |
-| RAM | 8 GB | 16 GB |
-| GPU | NVIDIA with CUDA (optional) | RTX 3050 Laptop (4 GB VRAM) |
-| OS | Windows 10 / Linux | Windows 11 Build 26300 |
-| Python | 3.10+ | 3.14.3 |
+Four SLM families selected for cross-platform evaluation:
 
-### Installation
+| Model | Parameters | License | Formats |
+|-------|-----------|---------|---------|
+| [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct) | 3.8B | MIT | GGUF, SafeTensors |
+| [Gemma-2-2B-it](https://huggingface.co/google/gemma-2-2b-it) | 2.6B | Gemma ToU | GGUF, SafeTensors |
+| [Qwen2.5-1.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) | 1.54B | Apache 2.0 | GGUF, SafeTensors |
+| [SmolLM2-1.7B-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct) | 1.7B | Apache 2.0 | GGUF, SafeTensors |
+
+## Benchmarks
+
+Metrics collected per configuration:
+
+| Metric | Unit | Method |
+|--------|------|--------|
+| Model Loading Time | seconds | `time.perf_counter_ns()` |
+| Time to First Token (TTFT) | ms | Streaming callback |
+| Tokens Per Second (TPS) | tok/s | Output tokens ÷ generation time |
+| End-to-End Latency | seconds | Wall clock |
+| Peak RAM | MB | `psutil` |
+| Peak VRAM | MB | `nvidia-smi` |
+
+## Quick Start
 
 ```bash
-# Clone the repository
+# Clone
 git clone https://github.com/Ma-nas/SLM-Evaluation.git
 cd SLM-Evaluation
 
-# Create virtual environment (recommended)
-python -m venv venv
-venv\Scripts\activate  # Windows
-
-# Install dependencies
+# Install core dependencies
 pip install -r requirements.txt
-```
 
-### Quick Start
-
-```bash
-# Profile your device
+# Profile your hardware
 python scripts/profile_device.py
 
-# Run benchmarks (after downloading models)
-python scripts/run_benchmark.py --config configs/default.yaml
-
-# View results
-python scripts/visualize_results.py
+# Run tests
+python -m pytest tests/ -v
 ```
 
-### Team
+## Hardware Tested
 
-| Member | Role | Responsibilities |
-|--------|------|-----------------|
-| Member 1 | Research Scientist | Literature review, SLM selection, quality evaluation |
-| Member 2 | System Architect | Device profiling, runtime integration, compatibility |
-| Member 3 | Benchmarking Specialist | Benchmark execution, data analysis, visualization |
+| Component | Specification |
+|-----------|---------------|
+| CPU | Intel i5-12450H (8C/12T) |
+| RAM | 16 GB |
+| GPU | NVIDIA RTX 3050 Laptop (4 GB VRAM) |
+| OS | Windows 11 |
+| Python | 3.14 |
 
-### Status
+## Repository Structure
 
-**Phase:** Week 1 — Research Foundation
+```
+SLM-Evaluation/
+├── README.md                   # This file
+├── LICENSE                     # MIT License
+├── requirements.txt            # Python dependencies
+├── .gitignore
+│
+├── src/                        # Source code
+│   ├── config/                 #   Central configuration
+│   ├── devices/                #   Device profiler
+│   ├── models/                 #   Model registry
+│   ├── runtimes/               #   Runtime adapters (llama.cpp, Transformers)
+│   ├── benchmarks/             #   Benchmark engine + SQLite storage
+│   ├── evaluation/             #   Quality metrics
+│   ├── monitoring/             #   Resource monitoring
+│   └── utils/                  #   Timer, logging utilities
+│
+├── tests/                      # Unit and integration tests
+├── scripts/                    # CLI tools (profiler, benchmark runner)
+├── configs/                    # Experiment configurations (YAML)
+│
+├── docs/                       # Documentation
+│   ├── research/               #   Literature review, model selection, gap analysis
+│   ├── architecture/           #   System design, device specification
+│   ├── experimental-design/    #   Benchmark methodology
+│   ├── project-management/     #   Planning, tracking, risk register
+│   └── report/                 #   University research report
+│
+├── results/                    # Experiment outputs
+│   ├── raw/                    #   Raw benchmark data
+│   ├── processed/              #   Aggregated statistics
+│   └── figures/                #   Generated charts
+│
+└── presentation/               # Slides and viva preparation
+```
 
-See [PROGRESS_TRACKER.md](PROGRESS_TRACKER.md) for detailed status.
+## Team
 
-### License
+| Role | Responsibilities |
+|------|-----------------|
+| **Research Scientist** | Literature review, model selection, quality evaluation |
+| **System Architect** | Device profiling, runtime adapters, compatibility matrix |
+| **Benchmarking Specialist** | Experiment execution, statistical analysis, visualization |
 
-This project is developed as part of a B.Tech final year project at JAIN (Deemed-to-be University).
+See [`docs/project-management/TEAM_TASKS.md`](docs/project-management/TEAM_TASKS.md) for detailed task tracking.
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Literature Review](docs/research/literature_review.md) | SLM landscape, quantization, runtimes, benchmarking frameworks |
+| [Research Gap](docs/research/research_gap.md) | Identified gaps and our contributions |
+| [Model Selection](docs/research/model_selection.md) | Candidate analysis and final selection rationale |
+| [Project Master Plan](docs/project-management/PROJECT_MASTER_PLAN.md) | Six-week execution plan |
+| [Architecture Decisions](docs/project-management/ARCHITECTURE_DECISIONS.md) | Technical decision log |
+| [Risk Register](docs/project-management/RESEARCH_RISK_REGISTER.md) | Risk assessment and mitigations |
+
+## License
+
+[MIT](LICENSE)
 
 ---
 
-*Academic Year 2025–2026*
+<sub>B.Tech Final Year Project — JAIN (Deemed-to-be University) — 2025–2026</sub>
